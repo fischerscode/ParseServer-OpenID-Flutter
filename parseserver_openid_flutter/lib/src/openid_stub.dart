@@ -1,11 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:parseserver_openid_flutter/src/openid_common.dart';
+import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
 
 ParseOpenID createOpenID({
   Parse parse,
-  @required Uri openidServer,
+  @required Uri authorizationEndpoint,
+  @required Uri tokenEndpoint,
   @required String clientID,
+  @required String redirectScheme,
+  @required String redirectHost,
+  @required String redirectPath,
 }) {
   throw UnimplementedError("STUB!");
 }

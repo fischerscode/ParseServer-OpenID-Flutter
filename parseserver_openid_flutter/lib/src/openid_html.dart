@@ -1,43 +1,76 @@
+import 'dart:html';
+
 import 'package:flutter/foundation.dart';
-import 'package:openid_client/openid_client_browser.dart';
+import 'package:oauth2/oauth2.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:parseserver_openid_flutter/src/openid_common.dart';
+import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
 
 ParseOpenID createOpenID({
-  Parse parse,
-  @required Uri openidServer,
+  @required Parse parse,
+  @required Uri authorizationEndpoint,
+  @required Uri tokenEndpoint,
   @required String clientID,
+  @required String redirectScheme,
+  @required String redirectHost,
+  @required String redirectPath,
 }) {
   return HttpParseOpenID.internal(
-      openidServer: openidServer, clientID: clientID, parse: parse);
+    parse: parse,
+    authorizationEndpoint: authorizationEndpoint,
+    tokenEndpoint: tokenEndpoint,
+    clientID: clientID,
+    redirectScheme: redirectScheme,
+    redirectHost: redirectHost,
+    redirectPath: redirectPath,
+  );
 }
 
 class HttpParseOpenID extends ParseOpenID {
+  WindowBase _popupWin;
+
   HttpParseOpenID.internal({
-    Parse parse,
-    @required Uri openidServer,
+    @required Parse parse,
+    @required Uri authorizationEndpoint,
+    @required Uri tokenEndpoint,
     @required String clientID,
-  }) : super.internal(parse, openidServer, clientID);
+    @required String redirectScheme,
+    @required String redirectHost,
+    @required String redirectPath,
+  }) : super.internal(
+          parse: parse,
+          authorizationEndpoint: authorizationEndpoint,
+          tokenEndpoint: tokenEndpoint,
+          clientID: clientID,
+          redirectScheme: redirectScheme,
+          redirectHost: redirectHost,
+          redirectPath: redirectPath,
+        );
 
   @override
-  Future<Credential> authenticateInBrowser({
-    Issuer issuer,
-    Client client,
-  }) async {
-    var authenticator = new Authenticator(
-      client,
-      scopes: ParseOpenID.scopes,
+  Future<Uri> authorize(
+    Uri authorizationUrl,
+    AuthorizationCodeGrant grant,
+    StateSetter stateSetter,
+  ) {
+    stateSetter(AuthenticationState.LogInOpen);
+    _popupWin = window.open(authorizationUrl.toString(), "Authentication",
+        "width=800, height=900, scrollbars=yes");
+    // _popupWin.addEventListener("onunload",
+    //     (event) => stateSetter(AuthenticationState.Unauthenticated));
+
+    return window.onMessage
+        .map((event) => event.data.toString())
+        .firstWhere((e) => e.contains("session_state="))
+        .then((value) => Uri.parse(value));
+  }
+
+  @override
+  Uri createRedirectUrl() {
+    return Uri(
+      host: Uri.base.host,
+      scheme: Uri.base.scheme,
+      port: Uri.base.port,
+      path: redirectPath,
     );
-
-    Credential credential = await authenticator.credential;
-
-    // print(credential.toJson());
-
-    if (credential == null) {
-      // authenticator.authorize();
-      return null;
-    } else {
-      return credential;
-    }
   }
 }
