@@ -129,8 +129,24 @@ abstract class ParseOpenID {
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
 
-      sharedPreferences.setString(
+      await sharedPreferences.setString(
           "oauthCredentials", client.credentials.toJson());
+    }
+  }
+
+  /// Logout at the parse server.
+  /// If the client is not considered to be [AuthenticationState.Authenticated] nothing will happen.
+  void logout() async {
+    if (state == AuthenticationState.Authenticated) {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      await sharedPreferences.remove("oauthCredentials");
+
+      await (await ParseUser.currentUser() as ParseUser).logout();
+
+      _state = AuthenticationState.Unauthenticated;
+
+      //TODO: revoke tokens
     }
   }
 
