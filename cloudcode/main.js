@@ -44,6 +44,11 @@ Parse.Cloud.define("openIDLogin", async (request) => {
 
             return {"user": user, "sessionToken": user.get("sessionToken")};
         }else{
+
+            user.set("username", response["preferred_username"]);
+            user.set("email", response["email"]);
+            await user.save(null, {useMasterKey: true});
+
             let sessionToken = `r:${randomString(32)}`;
             let session = new Parse.Object("_Session");
             session.set("user", user);
