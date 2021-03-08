@@ -126,7 +126,11 @@ abstract class ParseOpenID {
 
       _authenticateParse(client.credentials);
 
-      //TODO: store credentials
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+
+      sharedPreferences.setString(
+          "oauthCredentials", client.credentials.toJson());
     }
   }
 
