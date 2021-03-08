@@ -10,6 +10,7 @@ ParseOpenID createOpenID({
   @required String redirectScheme,
   @required String redirectHost,
   @required String redirectPath,
+  String logoutEndpoint,
 }) {
   throw UnimplementedError("STUB!");
 }

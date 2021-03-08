@@ -1,6 +1,7 @@
 library parseserver_openid_flutter;
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth2;
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:rxdart/subjects.dart';

@@ -13,6 +13,7 @@ ParseOpenID createOpenID({
   @required String redirectScheme,
   @required String redirectHost,
   @required String redirectPath,
+  String logoutEndpoint,
 }) {
   return HttpParseOpenID.internal(
     parse: parse,
@@ -22,6 +23,7 @@ ParseOpenID createOpenID({
     redirectScheme: redirectScheme,
     redirectHost: redirectHost,
     redirectPath: redirectPath,
+    logoutEndpoint: logoutEndpoint,
   );
 }
 
@@ -36,6 +38,7 @@ class HttpParseOpenID extends ParseOpenID {
     @required String redirectScheme,
     @required String redirectHost,
     @required String redirectPath,
+    String logoutEndpoint,
   }) : super.internal(
           parse: parse,
           authorizationEndpoint: authorizationEndpoint,
@@ -44,6 +47,7 @@ class HttpParseOpenID extends ParseOpenID {
           redirectScheme: redirectScheme,
           redirectHost: redirectHost,
           redirectPath: redirectPath,
+          logoutEndpoint: logoutEndpoint,
         );
 
   @override

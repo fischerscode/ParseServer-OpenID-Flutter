@@ -35,8 +35,14 @@ abstract class ParseOpenID {
   /// The client ID.
   final String _clientID;
 
+  /// The logout endpoint
+  final String logoutEndpoint;
+
   /// Whether the [ParseOpenID] has been initialized.
   bool _initialized;
+
+  /// The current [oauth2.Credentials]
+  oauth2.Credentials _credentials;
 
   /// The scopes requested.
   static const List<String> scopes = ['openid', 'profile'];
@@ -49,6 +55,7 @@ abstract class ParseOpenID {
     String redirectScheme = "com.example.parseopenid",
     String redirectHost = "parseopenid.example.com",
     String redirectPath = "openidredirect.html",
+    String logoutEndpoint,
   }) {
     if (_instance == null) {
       _instance = createOpenID(
@@ -59,6 +66,7 @@ abstract class ParseOpenID {
         redirectScheme: redirectScheme,
         redirectHost: redirectHost,
         redirectPath: redirectPath,
+        logoutEndpoint: logoutEndpoint,
       );
     }
 
@@ -116,8 +124,6 @@ abstract class ParseOpenID {
             state != AuthenticationState.Authenticating &&
             state != AuthenticationState.LogInOpen) ||
         force) {
-      //TODO: logout and revoke tokens
-
       oauth2.AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
           _clientID, authorizationEndpoint, tokenEndpoint);
 
@@ -142,15 +148,21 @@ abstract class ParseOpenID {
   /// If the client is not considered to be [AuthenticationState.Authenticated] nothing will happen.
   void logout() async {
     if (state == AuthenticationState.Authenticated) {
+      await (await ParseUser.currentUser() as ParseUser).logout();
+
+      if (logoutEndpoint != null && _credentials != null) {
+        await http.post(logoutEndpoint, body: {
+          "client_id": _clientID,
+          "refresh_token": _credentials.refreshToken,
+        });
+      }
+      _credentials = null;
+
       SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       await sharedPreferences.remove("oauthCredentials");
 
-      await (await ParseUser.currentUser() as ParseUser).logout();
-
       _state = AuthenticationState.Unauthenticated;
-
-      //TODO: revoke tokens
     }
   }
 
@@ -163,6 +175,7 @@ abstract class ParseOpenID {
     @required this.redirectScheme,
     @required this.redirectHost,
     @required this.redirectPath,
+    this.logoutEndpoint,
   })  : _parse = parse,
         _clientID = clientID,
         _stateStream =
@@ -196,7 +209,6 @@ abstract class ParseOpenID {
   /// Authenticate parse by using the provided
   void _authenticateParse(oauth2.Credentials credentials) async {
     _state = AuthenticationState.Authenticating;
-    print(credentials.accessToken);
 
     ParseCloudFunction loginFunction = new ParseCloudFunction("openIDLogin");
     ParseResponse response = await loginFunction.execute(parameters: {
@@ -209,6 +221,8 @@ abstract class ParseOpenID {
       print(response.error);
       _state = AuthenticationState.Unauthenticated;
     } else {
+      _credentials = credentials;
+
       ParseUser user = ParseUser.clone(response.result["user"]);
       ParseCoreData().setSessionId(response.result["sessionToken"]);
       user.sessionToken = response.result["sessionToken"];
