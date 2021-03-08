@@ -83,11 +83,15 @@ abstract class ParseOpenID {
         oauth2.Credentials credentials = oauth2.Credentials.fromJson(
             sharedPreferences.getString("oauthCredentials"));
 
-        if (_shouldRefresh(credentials)) {
-          credentials = await credentials.refresh();
-        }
+        try {
+          if (_shouldRefresh(credentials)) {
+            credentials = await credentials.refresh();
+          }
 
-        _authenticateParse(credentials);
+          _authenticateParse(credentials);
+        } on oauth2.AuthorizationException {
+          await sharedPreferences.remove("oauthCredentials");
+        }
       }
 
       _initialized = true;
