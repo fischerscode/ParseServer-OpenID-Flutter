@@ -1,6 +1,3 @@
-const userinfo_path = "/auth/realms/master/protocol/openid-connect/userinfo";
-const userinfo_host = "192.168.178.65";
-const userinfo_port = 8443;
 const httpsRequest = require('/parse-server/lib/Adapters/Auth/httpsRequest.js');
 
 /**
@@ -12,9 +9,9 @@ const httpsRequest = require('/parse-server/lib/Adapters/Auth/httpsRequest.js');
 Parse.Cloud.define("openIDLogin", async (request) => {
 
     const response = await httpsRequest.get({
-        host: userinfo_host,
-        port: userinfo_port,
-        path: userinfo_path,
+        host: process.env.PARSE_SERVER_OPEN_ID_HOST,
+        port: process.env.PARSE_SERVER_OPEN_ID_PORT,
+        path: process.env.PARSE_SERVER_OPEN_ID_USERINFO_PATH,
         headers: {
             Authorization: 'Bearer ' + request.params.access_token,
         },
