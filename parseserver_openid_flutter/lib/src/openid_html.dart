@@ -1,7 +1,6 @@
 import 'dart:html';
 
 import 'package:flutter/foundation.dart';
-import 'package:oauth2/oauth2.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
 
@@ -53,7 +52,6 @@ class HttpParseOpenID extends ParseOpenID {
   @override
   Future<Uri> authorize(
     Uri authorizationUrl,
-    AuthorizationCodeGrant grant,
     StateSetter stateSetter,
   ) {
     stateSetter(AuthenticationState.LogInOpen);

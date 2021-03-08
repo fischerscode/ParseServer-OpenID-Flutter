@@ -112,7 +112,7 @@ abstract class ParseOpenID {
   /// Login at the parse server.
   /// If the client is already considered to be authenticated or an authentication is in progress,
   /// nothing will happen, unless [force] is set to `true`.
-  void login({bool force = false}) async {
+  Future<void> login({bool force = false}) async {
     if (!_initialized) {
       throw ParseOpenIDException(
         errorCode: ParseOpenIDException.ErrorParseOpenIDNotInitialized,
@@ -127,9 +127,10 @@ abstract class ParseOpenID {
       oauth2.AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
           _clientID, authorizationEndpoint, tokenEndpoint);
 
-      Uri authorizationUrl = grant.getAuthorizationUrl(createRedirectUrl());
+      Uri authorizationUrl =
+          grant.getAuthorizationUrl(createRedirectUrl(), scopes: scopes);
 
-      Uri responseUrl = await authorize(authorizationUrl, grant, _setState);
+      Uri responseUrl = await authorize(authorizationUrl, _setState);
 
       oauth2.Client client =
           await grant.handleAuthorizationResponse(responseUrl.queryParameters);
@@ -145,25 +146,21 @@ abstract class ParseOpenID {
   }
 
   /// Logout at the parse server.
-  /// If the client is not considered to be [AuthenticationState.Authenticated] nothing will happen.
-  void logout() async {
-    if (state == AuthenticationState.Authenticated) {
-      await (await ParseUser.currentUser() as ParseUser).logout();
+  Future<void> logout() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    await sharedPreferences.remove("oauthCredentials");
 
-      if (logoutEndpoint != null && _credentials != null) {
-        await http.post(logoutEndpoint, body: {
-          "client_id": _clientID,
-          "refresh_token": _credentials.refreshToken,
-        });
-      }
-      _credentials = null;
+    await (await ParseUser.currentUser() as ParseUser).logout();
 
-      SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      await sharedPreferences.remove("oauthCredentials");
-
-      _state = AuthenticationState.Unauthenticated;
+    if (logoutEndpoint != null && _credentials != null) {
+      await http.post(logoutEndpoint, body: {
+        "client_id": _clientID,
+        "refresh_token": _credentials.refreshToken,
+      });
     }
+    _credentials = null;
+
+    _state = AuthenticationState.Unauthenticated;
   }
 
   /// Create a new [ParseOpenID] in order to login [_parse] using an openid provider.
@@ -199,7 +196,6 @@ abstract class ParseOpenID {
   /// The [stateSetter] is used to update the [AuthenticationState].
   Future<Uri> authorize(
     Uri authorizationUrl,
-    oauth2.AuthorizationCodeGrant grant,
     StateSetter stateSetter,
   );
 
@@ -209,6 +205,7 @@ abstract class ParseOpenID {
   /// Authenticate parse by using the provided
   void _authenticateParse(oauth2.Credentials credentials) async {
     _state = AuthenticationState.Authenticating;
+    _credentials = credentials;
 
     ParseCloudFunction loginFunction = new ParseCloudFunction("openIDLogin");
     ParseResponse response = await loginFunction.execute(parameters: {
@@ -218,11 +215,10 @@ abstract class ParseOpenID {
     });
 
     if (!response.success) {
+      await logout();
       print(response.error);
       _state = AuthenticationState.Unauthenticated;
     } else {
-      _credentials = credentials;
-
       ParseUser user = ParseUser.clone(response.result["user"]);
       ParseCoreData().setSessionId(response.result["sessionToken"]);
       user.sessionToken = response.result["sessionToken"];

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:oauth2/oauth2.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
 import 'package:uni_links/uni_links.dart';
@@ -52,7 +51,6 @@ class IOParseOpenID extends ParseOpenID {
   @override
   Future<Uri> authorize(
     Uri authorizationUrl,
-    AuthorizationCodeGrant grant,
     StateSetter stateSetter,
   ) async {
     if (await canLaunch(authorizationUrl.toString())) {
