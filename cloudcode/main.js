@@ -6,12 +6,12 @@ const httpsRequest = require('/parse-server/lib/Adapters/Auth/httpsRequest.js');
  *     installation_id: "......"
  * }
  */
-Parse.Cloud.define("openIDLogin", async (request) => {
+Parse.Cloud.define(process.env.PARSE_SERVER_OPENID_LOGIN_NAME || "openIDLogin", async (request) => {
 
     const response = await httpsRequest.get({
-        host: process.env.PARSE_SERVER_OPEN_ID_HOST,
-        port: process.env.PARSE_SERVER_OPEN_ID_PORT,
-        path: process.env.PARSE_SERVER_OPEN_ID_USERINFO_PATH,
+        host: process.env.PARSE_SERVER_OPENID_HOST,
+        port: process.env.PARSE_SERVER_OPENID_PORT,
+        path: process.env.PARSE_SERVER_OPENID_USERINFO_PATH,
         headers: {
             Authorization: 'Bearer ' + request.params.access_token,
         },
