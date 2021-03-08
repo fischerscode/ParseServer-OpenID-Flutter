@@ -170,9 +170,28 @@ abstract class ParseOpenID {
   Uri createRedirectUrl();
 
   /// Authenticate parse by using the provided
-  void _authenticateParse(oauth2.Credentials credentials) {
+  void _authenticateParse(oauth2.Credentials credentials) async {
     _state = AuthenticationState.Authenticating;
     print(credentials.accessToken);
+
+    ParseCloudFunction loginFunction = new ParseCloudFunction("openIDLogin");
+    ParseResponse response = await loginFunction.execute(parameters: {
+      "access_token": credentials.accessToken,
+      "installation_id":
+          (await ParseInstallation.currentInstallation()).installationId,
+    });
+
+    if (!response.success) {
+      print(response.error);
+      _state = AuthenticationState.Unauthenticated;
+    } else {
+      ParseUser user = ParseUser.clone(response.result["user"]);
+      ParseCoreData().setSessionId(response.result["sessionToken"]);
+      user.sessionToken = response.result["sessionToken"];
+      user.saveInStorage(keyParseStoreUser);
+
+      _state = AuthenticationState.Authenticated;
+    }
   }
 
   /// Determine if the provided [oauth2.Credentials] should be refreshed.
