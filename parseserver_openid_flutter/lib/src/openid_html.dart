@@ -27,8 +27,6 @@ ParseOpenID createOpenID({
 }
 
 class HttpParseOpenID extends ParseOpenID {
-  WindowBase _popupWin;
-
   HttpParseOpenID.internal({
     @required Parse parse,
     @required Uri authorizationEndpoint,
@@ -55,7 +53,7 @@ class HttpParseOpenID extends ParseOpenID {
     StateSetter stateSetter,
   ) {
     stateSetter(AuthenticationState.LogInOpen);
-    _popupWin = window.open(authorizationUrl.toString(), "Authentication",
+    window.open(authorizationUrl.toString(), "Authentication",
         "width=800, height=900, scrollbars=yes");
     // _popupWin.addEventListener("onunload",
     //     (event) => stateSetter(AuthenticationState.Unauthenticated));
