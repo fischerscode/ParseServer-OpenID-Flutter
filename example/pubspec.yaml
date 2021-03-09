@@ -1,0 +1,20 @@
+name: example
+description: An example application for the parseserver_openid_flutter package.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  parseserver_openid_flutter:
+    path: ../parseserver_openid_flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
