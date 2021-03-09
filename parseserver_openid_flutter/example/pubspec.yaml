@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   parseserver_openid_flutter:
-    path: ../parseserver_openid_flutter
+    path: ../
 
 dev_dependencies:
   flutter_test:
