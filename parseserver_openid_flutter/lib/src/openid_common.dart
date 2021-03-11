@@ -150,7 +150,7 @@ abstract class ParseOpenID {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove("oauthCredentials");
 
-    await (await ParseUser.currentUser() as ParseUser).logout();
+    await (await ParseUser.currentUser() as ParseUser)?.logout();
 
     if (logoutEndpoint != null && _credentials != null) {
       await http.post(logoutEndpoint, body: {
