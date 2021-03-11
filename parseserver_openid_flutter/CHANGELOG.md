@@ -1,3 +1,9 @@
+## 0.1.0
+**BREAKING CHANGE**
+
+move args from ParseOpenID() to init()
+`authorizationEndpoint` and `tokenEndpoint` are now Strings.
+
 ## 0.0.4
 Fix: missing data in saved user.
 

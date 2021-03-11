@@ -23,7 +23,7 @@ You have to add this package to your projects `pubspec.yaml`.
 
 ```yaml
 dependencies:
-  parseserver_openid_flutter: ">=0.0.1 <0.1.0"
+  parseserver_openid_flutter: ">=0.1.0 <0.2.0"
 ```
 
 ##### Platform specific setup.
