@@ -219,7 +219,8 @@ abstract class ParseOpenID {
       print(response.error);
       _state = AuthenticationState.Unauthenticated;
     } else {
-      ParseUser user = ParseUser.clone(response.result["user"]);
+      ParseUser user = ParseUser.clone(response.result["user"])
+        ..fromJson(response.result["user"]);
       ParseCoreData().setSessionId(response.result["sessionToken"]);
       user.sessionToken = response.result["sessionToken"];
       user.saveInStorage(keyParseStoreUser);
