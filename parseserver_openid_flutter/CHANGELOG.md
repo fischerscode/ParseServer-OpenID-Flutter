@@ -1,3 +1,6 @@
+## 0.0.4
+Fix: missing data in saved user.
+
 ## 0.0.3
 Fix null-pointer in logout()
 
