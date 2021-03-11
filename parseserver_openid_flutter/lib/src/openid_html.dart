@@ -1,51 +1,13 @@
 import 'dart:html';
 
-import 'package:flutter/foundation.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
 
-ParseOpenID createOpenID({
-  @required Parse parse,
-  @required Uri authorizationEndpoint,
-  @required Uri tokenEndpoint,
-  @required String clientID,
-  @required String redirectScheme,
-  @required String redirectHost,
-  @required String redirectPath,
-  String logoutEndpoint,
-}) {
-  return HttpParseOpenID.internal(
-    parse: parse,
-    authorizationEndpoint: authorizationEndpoint,
-    tokenEndpoint: tokenEndpoint,
-    clientID: clientID,
-    redirectScheme: redirectScheme,
-    redirectHost: redirectHost,
-    redirectPath: redirectPath,
-    logoutEndpoint: logoutEndpoint,
-  );
+ParseOpenID createOpenID() {
+  return HttpParseOpenID.internal();
 }
 
 class HttpParseOpenID extends ParseOpenID {
-  HttpParseOpenID.internal({
-    @required Parse parse,
-    @required Uri authorizationEndpoint,
-    @required Uri tokenEndpoint,
-    @required String clientID,
-    @required String redirectScheme,
-    @required String redirectHost,
-    @required String redirectPath,
-    String logoutEndpoint,
-  }) : super.internal(
-          parse: parse,
-          authorizationEndpoint: authorizationEndpoint,
-          tokenEndpoint: tokenEndpoint,
-          clientID: clientID,
-          redirectScheme: redirectScheme,
-          redirectHost: redirectHost,
-          redirectPath: redirectPath,
-          logoutEndpoint: logoutEndpoint,
-        );
+  HttpParseOpenID.internal() : super.internal();
 
   @override
   Future<Uri> authorize(

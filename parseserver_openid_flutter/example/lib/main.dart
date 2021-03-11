@@ -37,25 +37,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _MyHomePageState() {
     Parse parse = Parse();
-    parseOpenID = ParseOpenID(
-      authorizationEndpoint: Uri.parse(
-          "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/auth"),
-      tokenEndpoint: Uri.parse(
-          "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/token"),
-      redirectPath: "openidredirect.html",
-      redirectHost: "parseopenid.example.com",
-      redirectScheme: "com.example.parseopenid",
-      clientID: "flutter",
-      parse: parse,
-      logoutEndpoint:
-          "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/logout",
-    );
+    parseOpenID = ParseOpenID();
     parse
         .initialize(
           "myappID",
           "http://$HOST_IP:1337/parse",
         )
-        .then((parse) => parseOpenID.init());
+        .then((parse) => parseOpenID.init(
+              authorizationEndpoint:
+                  "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/auth",
+              tokenEndpoint:
+                  "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/token",
+              redirectPath: "openidredirect.html",
+              redirectHost: "parseopenid.example.com",
+              redirectScheme: "com.example.parseopenid",
+              clientID: "flutter",
+              parse: parse,
+              logoutEndpoint:
+                  "https://$HOST_IP:8443/auth/realms/master/protocol/openid-connect/logout",
+            ));
   }
 
   @override
