@@ -16,7 +16,7 @@ class IOParseOpenID extends ParseOpenID {
     StateSetter stateSetter,
   ) async {
     if (await canLaunch(authorizationUrl.toString())) {
-      launch(authorizationUrl.toString(), forceWebView: true)
+      launch(authorizationUrl.toString(), forceWebView: false)
           .onError((error, stackTrace) async {
         if (error is PlatformException) return;
         throw error;
