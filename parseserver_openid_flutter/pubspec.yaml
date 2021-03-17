@@ -1,6 +1,6 @@
 name: parseserver_openid_flutter
 description: A package that adds openid authentification to the ParseServer Flutter package.
-version: 0.1.0
+version: 0.1.1
 homepage: https://github.com/fischerscode/ParseServer-OpenID-Flutter
 
 environment:

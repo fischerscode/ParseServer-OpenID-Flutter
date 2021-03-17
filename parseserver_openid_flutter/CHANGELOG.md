@@ -1,3 +1,7 @@
+## 0.1.1
+
+fix on android: don't use WebView
+
 ## 0.1.0
 **BREAKING CHANGE**
 
