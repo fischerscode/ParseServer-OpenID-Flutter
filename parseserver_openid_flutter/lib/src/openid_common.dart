@@ -13,9 +13,6 @@ abstract class ParseOpenID {
   /// A stream of [AuthenticationState]s.
   final BehaviorSubject<AuthenticationState> _stateStream;
 
-  /// The [Parse] instance.
-  Parse _parse;
-
   /// The authorization endpoint
   String _authorizationEndpoint;
 
@@ -80,7 +77,6 @@ abstract class ParseOpenID {
       _redirectHost = redirectHost;
       _redirectPath = redirectPath;
       _logoutEndpoint = logoutEndpoint;
-      _parse = parse ?? Parse();
       _clientID = clientID;
 
       SharedPreferences sharedPreferences =
