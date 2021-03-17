@@ -1,3 +1,7 @@
+## 0.1.2
+
+Send clientID on refresh.
+
 ## 0.1.1
 
 fix on android: don't use WebView
