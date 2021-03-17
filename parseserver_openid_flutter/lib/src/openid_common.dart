@@ -89,7 +89,7 @@ abstract class ParseOpenID {
 
         try {
           if (_shouldRefresh(credentials)) {
-            credentials = await credentials.refresh();
+            credentials = await credentials.refresh(identifier: clientID);
           }
 
           _authenticateParse(credentials);
