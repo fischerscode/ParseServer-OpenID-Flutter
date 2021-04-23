@@ -434,13 +434,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.0"
-  uni_links:
+  uni_links2:
     dependency: transitive
     description:
-      name: uni_links
+      name: uni_links2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.0"
+    version: "0.6.0+2"
+  uni_links2_platform_interface:
+    dependency: transitive
+    description:
+      name: uni_links2_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0+2"
+  uni_links_web2:
+    dependency: transitive
+    description:
+      name: uni_links_web2
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0+2"
   url_launcher:
     dependency: transitive
     description:
@@ -527,4 +541,4 @@ packages:
     version: "2.1.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.22.0"
+  flutter: ">=2.0.1"
