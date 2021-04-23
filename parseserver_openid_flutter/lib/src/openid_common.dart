@@ -218,7 +218,7 @@ abstract class ParseOpenID {
   }
 
   /// Determine if the provided [oauth2.Credentials] should be refreshed.
-  /// This will return true five seconds befor the credentials actually expire.
+  /// This will return true five seconds before the credentials actually expire.
   static bool _shouldRefresh(oauth2.Credentials credentials) {
     return credentials.expiration != null &&
         DateTime.now()
