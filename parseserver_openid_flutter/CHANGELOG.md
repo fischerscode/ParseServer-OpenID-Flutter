@@ -1,3 +1,9 @@
+## 0.2.0
+
+Updated dependencies.
+Migrated to nullsafety.
+
+
 ## 0.1.2
 
 Send clientID on refresh.

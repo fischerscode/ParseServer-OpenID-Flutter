@@ -23,7 +23,7 @@ You have to add this package to your projects `pubspec.yaml`.
 
 ```yaml
 dependencies:
-  parseserver_openid_flutter: ">=0.1.0 <0.2.0"
+  parseserver_openid_flutter: ">=0.2.0 <0.3.0"
 ```
 
 ##### Platform specific setup.
@@ -51,6 +51,22 @@ Add a new intent-filter in `android/app/src/main/AndroidManifest.xml`;
   </application>
 </manifest>
 ```
+
+If you target Android 30 or above, you also have too add this to your `android/app/src/main/AndroidManifest.xml`.
+Otherwise your app is not allowed to open `http`links in the browser.
+
+```xml
+<manifest ...>
+    <queries>
+    <intent>
+      <action android:name="android.intent.action.VIEW" />
+      <category android:name="android.intent.category.BROWSABLE" />
+      <data android:scheme="https" />
+    </intent>
+  </queries>
+</manifest>
+```
+
 ###### IOS
 Add the `CFBundleURLTypes` key to your `ios/Runner/Info.plist`.
 ```xml

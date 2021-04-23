@@ -17,14 +17,16 @@ class IOParseOpenID extends ParseOpenID {
   ) async {
     if (await canLaunch(authorizationUrl.toString())) {
       launch(authorizationUrl.toString(), forceWebView: false)
-          .onError((error, stackTrace) async {
-        if (error is PlatformException) return;
+          .onError((dynamic error, stackTrace) async {
+        if (error is PlatformException) {
+          return false;
+        }
         throw error;
       });
 
       Uri redirectedUrl = await linkStream
-          .firstWhere((e) => e.contains("session_state="))
-          .then((value) => Uri.parse(value));
+          .firstWhere((e) => e!.contains("session_state="))
+          .then((value) => Uri.parse(value!));
       closeWebView();
       return redirectedUrl;
     } else {

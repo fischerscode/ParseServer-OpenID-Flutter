@@ -5,7 +5,7 @@ typedef StateSetter(AuthenticationState newState);
 /// A class for authenticating against a parse server using openid.
 abstract class ParseOpenID {
   /// The instance of the [ParseOpenID]
-  static ParseOpenID _instance;
+  static ParseOpenID? _instance;
 
   /// The current [AuthenticationState] of the client.
   AuthenticationState __state;
@@ -14,32 +14,32 @@ abstract class ParseOpenID {
   final BehaviorSubject<AuthenticationState> _stateStream;
 
   /// The authorization endpoint
-  String _authorizationEndpoint;
+  String? _authorizationEndpoint;
 
   /// The token endpoint
-  String _tokenEndpoint;
+  String? _tokenEndpoint;
 
   /// The scheme used for the redirect url. (Only used on native)
-  String _redirectScheme;
+  String? _redirectScheme;
 
   /// The host used for the redirect url. (Only used on native)
-  String _redirectHost;
+  String? _redirectHost;
 
   /// The path used for the redirect url.
   /// On web, this should be the location of the openidredirect.html file.
-  String _redirectPath;
+  String? _redirectPath;
 
   /// The client ID.
-  String _clientID;
+  String? _clientID;
 
   /// The logout endpoint
-  String _logoutEndpoint;
+  String? _logoutEndpoint;
 
   /// Whether the [ParseOpenID] has been initialized.
   bool _initialized;
 
   /// The current [oauth2.Credentials]
-  oauth2.Credentials _credentials;
+  oauth2.Credentials? _credentials;
 
   /// The scopes requested.
   static const List<String> scopes = ['openid', 'profile'];
@@ -49,19 +49,19 @@ abstract class ParseOpenID {
       _instance = createOpenID();
     }
 
-    return _instance;
+    return _instance!;
   }
 
   /// Init the [ParseOpenID]. [Parse] must be initialized first.
   Future<void> init({
-    Parse parse,
-    @required String authorizationEndpoint,
-    @required String tokenEndpoint,
-    @required String clientID,
+    Parse? parse,
+    required String authorizationEndpoint,
+    required String tokenEndpoint,
+    required String clientID,
     String redirectScheme = "com.example.parseopenid",
     String redirectHost = "parseopenid.example.com",
     String redirectPath = "openidredirect.html",
-    String logoutEndpoint,
+    String? logoutEndpoint,
   }) async {
     if (!(parse ?? Parse()).hasParseBeenInitialized()) {
       throw ParseOpenIDException(
@@ -85,7 +85,7 @@ abstract class ParseOpenID {
       // If the OAuth2 credentials have already been saved from a previous run, we just want to reload them.
       if (sharedPreferences.containsKey("oauthCredentials")) {
         oauth2.Credentials credentials = oauth2.Credentials.fromJson(
-            sharedPreferences.getString("oauthCredentials"));
+            sharedPreferences.getString("oauthCredentials")!);
 
         try {
           if (_shouldRefresh(credentials)) {
@@ -109,21 +109,21 @@ abstract class ParseOpenID {
   /// If the client is already considered to be authenticated or an authentication is in progress,
   /// nothing will happen, unless [force] is set to `true`.
   Future<void> login({bool force = false}) async {
-    if (!_initialized) {
+    if (!_initialized ||
+        _authorizationEndpoint == null ||
+        _tokenEndpoint == null) {
       throw ParseOpenIDException(
         errorCode: ParseOpenIDException.ErrorParseOpenIDNotInitialized,
         message: "ParseOpenID has not been initialized, yet.",
       );
-    }
-
-    if ((state != AuthenticationState.Authenticated &&
+    } else if ((state != AuthenticationState.Authenticated &&
             state != AuthenticationState.Authenticating &&
             state != AuthenticationState.LogInOpen) ||
         force) {
       oauth2.AuthorizationCodeGrant grant = oauth2.AuthorizationCodeGrant(
-          _clientID,
-          Uri.parse(_authorizationEndpoint),
-          Uri.parse(_tokenEndpoint));
+          _clientID!,
+          Uri.parse(_authorizationEndpoint!),
+          Uri.parse(_tokenEndpoint!));
 
       Uri authorizationUrl =
           grant.getAuthorizationUrl(createRedirectUrl(), scopes: scopes);
@@ -148,12 +148,12 @@ abstract class ParseOpenID {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     await sharedPreferences.remove("oauthCredentials");
 
-    await (await ParseUser.currentUser() as ParseUser)?.logout();
+    await (await ParseUser.currentUser() as ParseUser?)?.logout();
 
     if (_logoutEndpoint != null && _credentials != null) {
-      await http.post(Uri.parse(_logoutEndpoint), body: {
+      await http.post(Uri.parse(_logoutEndpoint!), body: {
         "client_id": _clientID,
-        "refresh_token": _credentials.refreshToken,
+        "refresh_token": _credentials!.refreshToken,
       });
     }
     _credentials = null;
@@ -222,7 +222,7 @@ abstract class ParseOpenID {
   static bool _shouldRefresh(oauth2.Credentials credentials) {
     return credentials.expiration != null &&
         DateTime.now()
-            .isAfter(credentials.expiration.subtract(Duration(seconds: 5)));
+            .isAfter(credentials.expiration!.subtract(Duration(seconds: 5)));
   }
 
   /// Update the [AuthenticationState]. Same as [_state].
@@ -231,11 +231,11 @@ abstract class ParseOpenID {
   }
 
   /// The scheme used for the redirect url.
-  String get redirectScheme => _redirectScheme;
+  String? get redirectScheme => _redirectScheme;
 
   /// The host used for the redirect url.
-  String get redirectHost => _redirectHost;
+  String? get redirectHost => _redirectHost;
 
   /// The path used for the redirect url.
-  String get redirectPath => _redirectPath;
+  String? get redirectPath => _redirectPath;
 }
