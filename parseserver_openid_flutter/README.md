@@ -5,6 +5,8 @@
 
 ---
 
+[![pub.dev version](https://img.shields.io/pub/v/parseserver_openid_flutter)](https://pub.dev/packages/parseserver_openid_flutter) [![pub.dev prerelease](https://img.shields.io/pub/v/parseserver_openid_flutter?include_prereleases&label=pub%20prerelease)](https://pub.dev/packages/parseserver_openid_flutter)
+
 This package adds OpenID authentication to the [parse_server_sdk_flutter](https://pub.dev/packages/parse_server_sdk_flutter) package.
 
 By authenticating against an access server and sending the access token to the parse server,
