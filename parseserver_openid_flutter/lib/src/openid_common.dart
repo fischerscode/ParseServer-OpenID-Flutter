@@ -151,7 +151,7 @@ abstract class ParseOpenID {
     await (await ParseUser.currentUser() as ParseUser)?.logout();
 
     if (_logoutEndpoint != null && _credentials != null) {
-      await http.post(_logoutEndpoint, body: {
+      await http.post(Uri.parse(_logoutEndpoint), body: {
         "client_id": _clientID,
         "refresh_token": _credentials.refreshToken,
       });
