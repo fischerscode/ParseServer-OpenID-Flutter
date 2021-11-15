@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:parseserver_openid_flutter/parseserver_openid_flutter.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:uni_links2/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 ParseOpenID createOpenID() {
@@ -17,14 +17,16 @@ class IOParseOpenID extends ParseOpenID {
   ) async {
     if (await canLaunch(authorizationUrl.toString())) {
       launch(authorizationUrl.toString(), forceWebView: false)
-          .onError((error, stackTrace) async {
-        if (error is PlatformException) return;
+          .onError((dynamic error, stackTrace) async {
+        if (error is PlatformException) {
+          return false;
+        }
         throw error;
       });
 
-      Uri redirectedUrl = await getLinksStream()
-          .firstWhere((e) => e.contains("session_state="))
-          .then((value) => Uri.parse(value));
+      Uri redirectedUrl = await linkStream
+          .firstWhere((e) => e!.contains("session_state="))
+          .then((value) => Uri.parse(value!));
       closeWebView();
       return redirectedUrl;
     } else {

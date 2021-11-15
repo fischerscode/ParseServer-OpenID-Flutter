@@ -10,7 +10,7 @@ class ParseOpenIDException {
 
   ParseOpenIDException({
     this.errorCode = -1,
-    this.message,
+    required this.message,
   });
 
   @override
